@@ -446,6 +446,7 @@ class LogStash::Agent
   end
 
   def stop_webserver
+    puts "stopping webserver"
     @webserver_control_lock.synchronize do
       if @webserver_thread
         @webserver.stop
@@ -455,6 +456,7 @@ class LogStash::Agent
         end
       end
     end
+    puts "stopped webserver"
   end
 
   def configure_metrics_collectors
