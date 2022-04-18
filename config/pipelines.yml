@@ -6,13 +6,29 @@
 #
 # Example of two pipelines:
 #
-# - pipeline.id: test
-#   pipeline.workers: 1
-#   pipeline.batch.size: 1
-#   config.string: "input { generator {} } filter { sleep { time => 1 } } output { stdout { codec => dots } }"
-# - pipeline.id: another_test
-#   queue.type: persisted
-#   path.config: "/tmp/logstash/*.config"
+#- pipeline.id: test
+#  config.string: "input { beats { port => 5044 tag => '${aaa}' } }  output { stdout { codec => dots } }"
+- pipeline.id: test
+  config.string: "input { beats { port => 5044 } }  output { stdout { codec => dots } }"
+- pipeline.id: another_test
+#  queue.type: memory
+  config.string: "input { beats { port => 5045} }  output { stdout { codec => dots } }"
+#- pipeline.id: test2
+#  config.string: "input { generator {} } filter { sleep { time => 1 } } output { stdout { codec => dots } }"
+#- pipeline.id: another_test2
+#  queue.type: persisted
+#  config.string: "input { generator {} } filter { sleep { time => 1 } } output { stdout { codec => dots } }"
+#- pipeline.id: test3
+#  config.string: "input { generator {} } filter { sleep { time => 1 } } output { stdout { codec => dots } }"
+#- pipeline.id: another_test3
+#  queue.type: persisted
+#  config.string: "input { generator {} } filter { sleep { time => 1 } } output { stdout { codec => dots } }"
+#- pipeline.id: test4
+#  config.string: "input { generator {} } filter { sleep { time => 1 } } output { stdout { codec => dots } }"
+#- pipeline.id: another_test4
+#  queue.type: persisted
+#  config.string: "input { generator {} } filter { sleep { time => 1 } } output { stdout { codec => dots } }"
+
 #
 # Available options:
 #
