@@ -203,6 +203,7 @@ public final class Logstash implements Runnable, AutoCloseable {
         ThreadService service = ruby.getThreadService();
         RubyThread[] var1 = service.getActiveRubyThreads();
         for (RubyThread thread : var1){
+            System.out.println("ActiveThread: " + thread.toString());
             LOGGER.info("ActiveThread: {}", thread.toString());
         }
         int var2 = var1.length;
@@ -218,9 +219,12 @@ public final class Logstash implements Runnable, AutoCloseable {
             ThreadContext mainContext =  (ThreadContext) f.get(service); //IllegalAccessException
             try {
                 LOGGER.info("Killing: {}", rth.toString());
+                System.out.println("Killing: " + rth.toString());
                 rth.kill();
                 LOGGER.info("Joining: {}", rth.toString());
+                System.out.println("Joining: " + rth.toString());
                 rth.join(mainContext, IRubyObject.NULL_ARRAY);
+                System.out.println("Joined: " + rth.toString());
                 LOGGER.info("Joined: {}", rth.toString());
             } catch (RaiseException var6) {
                 System.out.println(var6.toString());

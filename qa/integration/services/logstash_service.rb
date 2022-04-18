@@ -247,6 +247,7 @@ class LogstashService < Service
     if ENV.key?("BUILD_JAVA_HOME") && !process.environment.key?("LS_JAVA_HOME")
       process.environment["LS_JAVA_HOME"] = ENV["BUILD_JAVA_HOME"]
     end
+    # process.io.inherit!
     process.io.stdout = process.io.stderr = out
 
     Bundler.with_unbundled_env do
