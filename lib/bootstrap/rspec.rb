@@ -31,7 +31,6 @@ require "rspec/core"
 require "rspec"
 require 'ci/reporter/rake/rspec_loader'
 
-
 RSpec.clear_examples # if multiple rspec runs occur in a single process, the RSpec "world" state needs to be reset.
 
 status = RSpec::Core::Runner.run(ARGV.empty? ? ($JUNIT_ARGV || ["spec"]) : ARGV).to_i

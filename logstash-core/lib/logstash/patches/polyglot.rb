@@ -1,6 +1,5 @@
 require 'polyglot'
 
-
 module Kernel
   alias original_require require
 

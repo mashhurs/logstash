@@ -333,9 +333,9 @@ tasks.register("bootstrap"){
 
 tasks.register("installDefaultGems") {
     dependsOn bootstrap
-  doLast {
-      rake(projectDir, buildDir, 'plugin:install-default')
-  }
+    doLast {
+        rake(projectDir, buildDir, 'plugin:install-default')
+    }
 }
 
 tasks.register("installTestGems") {
