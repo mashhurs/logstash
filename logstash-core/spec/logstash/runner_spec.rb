@@ -644,4 +644,47 @@ describe LogStash::Runner do
       end
     end
   end
+
+  describe "on_superuser" do
+    subject { LogStash::Runner.new("") }
+    let(:args) { ["-e", "input {} output {}"] }
+
+    context "unintentionally running logstash as root" do
+      before do
+        expect(Process).to receive(:euid).and_return(0)
+      end
+      it "fails with bad exit" do
+        LogStash::SETTINGS.set("on_superuser", "BLOCK")
+        expect(logger).to receive(:fatal) do |msg, hash|
+          expect(msg).to eq("An unexpected error occurred!")
+          expect(hash[:error].to_s).to match("Logstash cannot be run as root")
+        end
+        expect(subject.run(args)).to eq(1)
+      end
+    end
+
+    context "intentionally running logstash as root " do
+      before do
+        expect(Process).to receive(:euid).and_return(0)
+      end
+      it "runs successfully with warning message" do
+        LogStash::SETTINGS.set("on_superuser", "WARN")
+        expect(logger).not_to receive(:fatal)
+        expect(logger).to receive(:warn).with("Running logstash as root is not recommended because of security reasons")
+        expect { subject.run(args) }.not_to raise_error
+      end
+    end
+
+    context "running logstash as non-root " do
+      before do
+        expect(Process).to receive(:euid).and_return(100)
+      end
+      it "runs successfully without any messages" do
+        LogStash::SETTINGS.set("on_superuser", "BLOCK")
+        expect(logger).not_to receive(:fatal)
+        expect(logger).not_to receive(:warn).with("Running logstash as root is not recommended because of security reasons")
+        expect { subject.run(args) }.not_to raise_error
+      end
+    end
+  end
 end
