@@ -176,8 +176,12 @@ module LogStash
             end
 
             try += 1
+
             $stderr.puts("Error #{e.class}, retrying #{try}/#{options[:max_tries]}")
             $stderr.puts(e.message)
+            $stderr.puts(e.inspect)
+            $stderr.puts(e.cause)
+            $stderr.puts(e.backtrace)
             sleep(0.5)
           end
         end
