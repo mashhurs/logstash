@@ -30,18 +30,18 @@ public class MetricsUtil {
         return rates.entrySet()
                 .stream()
                 .collect(Collectors.toMap(Map.Entry::getKey,
-                        e -> divide(fraction.doubleValue(), e.getValue())));
+                        e -> multiply(fraction.doubleValue(), e.getValue())));
     }
 
     public static boolean isValueUndefined(Double value) {
         return value.isInfinite() || value.isNaN() || ZERO.equals(value);
     }
 
-    private static Double divide(Double nominator, Double denominator) {
+    private static Double multiply(Double nominator, Double denominator) {
         if (isValueUndefined(nominator) || isValueUndefined(denominator)) {
             return ZERO;
         }
 
-        return nominator / denominator;
+        return nominator * denominator;
     }
 }
