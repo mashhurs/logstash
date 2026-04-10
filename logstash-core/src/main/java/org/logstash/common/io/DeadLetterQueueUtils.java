@@ -28,6 +28,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.Comparator;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -58,6 +59,22 @@ class DeadLetterQueueUtils {
         return listFiles(path, ".log");
     }
 
+    static Stream<Path> listSegmentPathsSortedBySegmentId(Path path) throws IOException {
+        return listSegmentPaths(path)
+                .sorted(Comparator.comparingInt(DeadLetterQueueUtils::extractSegmentId));
+    }
+
+    /**
+     * Stream-based scan that materializes all segment paths into a list,
+     * then maps filenames to segment IDs via split/parse to find the max.
+     */
+    static int maxSegmentIdUsingStream(Path path) throws IOException {
+        return listSegmentPaths(path)
+                .map(s -> s.getFileName().toString().split("\\.")[0])
+                .mapToInt(Integer::parseInt)
+                .max().orElse(0);
+    }
+
     /**
      * Single-pass scan using OS-level glob filtering; avoids materializing
      * all paths into a collection when only the numeric maximum is needed.
@@ -70,6 +87,16 @@ class DeadLetterQueueUtils {
             }
         }
         return max;
+    }
+
+    /**
+     * Stream-based scan that sorts all materialized segment paths by segment ID,
+     * filters by file size, and returns the first match.
+     */
+    static Optional<Path> oldestSegmentPathUsingStream(Path path, long minFileSize) throws IOException {
+        return listSegmentPathsSortedBySegmentId(path)
+                .filter(p -> p.toFile().length() > minFileSize)
+                .findFirst();
     }
 
     /**
